@@ -1,46 +1,72 @@
-# Getting Started with Create React App
+# Multigenesys
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+An employee management application built with React and TypeScript. Perform full CRUD operations on employees, search by ID, and manage employee data with country selection.
+
+## Features
+
+- **Employee Management**: Create, read, update, and delete employees
+- **Search by ID**: Find employees by their unique ID
+- **Country Selection**: Employee form includes country dropdown (with flags) from external API
+- **Modern UI**: Material-UI (MUI) components with a clean, responsive design
+- **Form Validation**: React Hook Form with Yup schema validation
+- **State Management**: Redux Toolkit for employees and countries data
+
+## Tech Stack
+
+- **React 19** with TypeScript
+- **Redux Toolkit** – state management
+- **Material-UI (MUI)** – UI components
+- **React Hook Form** + **Yup** – form handling and validation
+- **Axios** – HTTP client
+- **SweetAlert2** – alerts and confirmations
+
+## Project Structure
+
+```
+src/
+├── api/              # API client and endpoints
+│   ├── axiosClient.ts
+│   ├── employeesApi.ts
+│   └── countriesApi.ts
+├── components/       # Reusable UI components
+│   └── common/       # ConfirmDialog, ErrorSnackbar, SuccessSnackbar
+├── features/
+│   ├── employees/   # Employee list, form, page, and slice
+│   └── countries/   # Countries slice
+├── utils/           # Utilities (e.g. SweetAlert helpers)
+├── hooks.ts         # Typed Redux hooks
+└── store.ts         # Redux store configuration
+```
+
+## API
+
+The app uses a mock API at `https://669b3f09276e45187d34eb4e.mockapi.io/api/v1`:
+
+- `GET/POST /employee` – list and create employees
+- `GET/PUT/DELETE /employee/:id` – fetch, update, delete employee
+- `GET /country` – list countries (for dropdown)
 
 ## Available Scripts
 
-In the project directory, you can run:
-
 ### `npm start`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+Runs the app in development mode. Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
 ### `npm test`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Launches the test runner in interactive watch mode.
 
 ### `npm run build`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Builds the app for production to the `build` folder.
 
 ### `npm run eject`
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+**Note: This is a one-way operation.** Ejects from Create React App to expose build configuration. See [Create React App docs](https://facebook.github.io/create-react-app/docs/getting-started) for details.
 
 ## Learn More
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+- [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started)
+- [React documentation](https://reactjs.org/)
+- [Redux Toolkit](https://redux-toolkit.js.org/)
+- [Material-UI](https://mui.com/)
