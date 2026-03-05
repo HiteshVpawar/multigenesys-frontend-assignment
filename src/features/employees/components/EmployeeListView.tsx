@@ -9,6 +9,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  TableSortLabel,
   IconButton,
   Button,
   TextField,
@@ -45,6 +46,8 @@ export interface EmployeeListViewProps {
 
 const ITEMS_PER_PAGE = 10;
 
+type SortKey = 'id' | 'name' | 'email' | 'mobile' | 'country' | 'state' | 'district';
+
 const EmployeeListView: React.FC<EmployeeListViewProps> = ({
   employees,
   countriesById,
@@ -61,6 +64,8 @@ const EmployeeListView: React.FC<EmployeeListViewProps> = ({
   searchError,
 }) => {
   const [page, setPage] = useState(1);
+  const [sortKey, setSortKey] = useState<SortKey>('id');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
 
   useEffect(() => {
     if (searchResult) {
@@ -75,19 +80,100 @@ const EmployeeListView: React.FC<EmployeeListViewProps> = ({
     return employees;
   }, [searchResult, employees]);
 
+  const sortedEmployees = useMemo(() => {
+    if (searchResult) {
+      return displayEmployees;
+    }
+
+    const employeesCopy = [...displayEmployees];
+
+    employeesCopy.sort((a, b) => {
+      let aValue = '';
+      let bValue = '';
+
+      switch (sortKey) {
+        case 'id':
+          aValue = a.id ?? '';
+          bValue = b.id ?? '';
+          break;
+        case 'name':
+          aValue = a.name || '';
+          bValue = b.name || '';
+          break;
+        case 'email':
+          aValue = a.email || '';
+          bValue = b.email || '';
+          break;
+        case 'mobile':
+          aValue = a.mobile || '';
+          bValue = b.mobile || '';
+          break;
+        case 'country': {
+          const getName = (emp: Employee): string => {
+            if (emp.countryName) {
+              return emp.countryName;
+            }
+            if (emp.countryId && countriesById[emp.countryId]) {
+              return countriesById[emp.countryId];
+            }
+            return emp.countryId || 'N/A';
+          };
+
+          aValue = getName(a);
+          bValue = getName(b);
+          break;
+        }
+        case 'state':
+          aValue = a.state || '';
+          bValue = b.state || '';
+          break;
+        case 'district':
+          aValue = a.district || '';
+          bValue = b.district || '';
+          break;
+        default:
+          break;
+      }
+
+      const compareResult = aValue.localeCompare(bValue, undefined, {
+        sensitivity: 'base',
+        numeric: true,
+      });
+
+      return sortDirection === 'asc' ? compareResult : -compareResult;
+    });
+
+    return employeesCopy;
+  }, [displayEmployees, sortKey, sortDirection, countriesById, searchResult]);
+
   const paginatedEmployees = useMemo(() => {
     if (searchResult) {
       return [searchResult];
     }
     const startIndex = (page - 1) * ITEMS_PER_PAGE;
     const endIndex = startIndex + ITEMS_PER_PAGE;
-    return displayEmployees.slice(startIndex, endIndex);
-  }, [displayEmployees, page, searchResult]);
+    return sortedEmployees.slice(startIndex, endIndex);
+  }, [sortedEmployees, page, searchResult]);
 
   const totalPages = Math.ceil(displayEmployees.length / ITEMS_PER_PAGE);
 
   const handlePageChange = (_event: React.ChangeEvent<unknown>, value: number) => {
     setPage(value);
+  };
+
+  const handleSort = (column: SortKey) => {
+    if (searchResult) {
+      return;
+    }
+
+    setPage(1);
+
+    if (sortKey === column) {
+      setSortDirection((prevDirection) => (prevDirection === 'asc' ? 'desc' : 'asc'));
+    } else {
+      setSortKey(column);
+      setSortDirection('asc');
+    }
   };
 
   const getCountryName = (employee: Employee): string => {
@@ -334,13 +420,76 @@ const EmployeeListView: React.FC<EmployeeListViewProps> = ({
                   },
                 }}
               >
-                <TableCell sx={{ width: '8%' }}>ID</TableCell>
-                <TableCell sx={{ width: '15%' }}>Name</TableCell>
-                <TableCell sx={{ width: '18%' }}>Email</TableCell>
-                <TableCell sx={{ width: '12%' }}>Mobile</TableCell>
-                <TableCell sx={{ width: '12%' }}>Country</TableCell>
-                <TableCell sx={{ width: '12%' }}>State</TableCell>
-                <TableCell sx={{ width: '12%' }}>District</TableCell>
+              <TableCell sx={{ width: '8%' }}>
+                <TableSortLabel
+                  active={sortKey === 'id'}
+                  direction={sortKey === 'id' ? sortDirection : 'asc'}
+                  onClick={() => handleSort('id')}
+                  disabled={!!searchResult}
+                >
+                  ID
+                </TableSortLabel>
+              </TableCell>
+              <TableCell sx={{ width: '15%' }}>
+                <TableSortLabel
+                  active={sortKey === 'name'}
+                  direction={sortKey === 'name' ? sortDirection : 'asc'}
+                  onClick={() => handleSort('name')}
+                  disabled={!!searchResult}
+                >
+                  Name
+                </TableSortLabel>
+              </TableCell>
+              <TableCell sx={{ width: '18%' }}>
+                <TableSortLabel
+                  active={sortKey === 'email'}
+                  direction={sortKey === 'email' ? sortDirection : 'asc'}
+                  onClick={() => handleSort('email')}
+                  disabled={!!searchResult}
+                >
+                  Email
+                </TableSortLabel>
+              </TableCell>
+              <TableCell sx={{ width: '12%' }}>
+                <TableSortLabel
+                  active={sortKey === 'mobile'}
+                  direction={sortKey === 'mobile' ? sortDirection : 'asc'}
+                  onClick={() => handleSort('mobile')}
+                  disabled={!!searchResult}
+                >
+                  Mobile
+                </TableSortLabel>
+              </TableCell>
+              <TableCell sx={{ width: '12%' }}>
+                <TableSortLabel
+                  active={sortKey === 'country'}
+                  direction={sortKey === 'country' ? sortDirection : 'asc'}
+                  onClick={() => handleSort('country')}
+                  disabled={!!searchResult}
+                >
+                  Country
+                </TableSortLabel>
+              </TableCell>
+              <TableCell sx={{ width: '12%' }}>
+                <TableSortLabel
+                  active={sortKey === 'state'}
+                  direction={sortKey === 'state' ? sortDirection : 'asc'}
+                  onClick={() => handleSort('state')}
+                  disabled={!!searchResult}
+                >
+                  State
+                </TableSortLabel>
+              </TableCell>
+              <TableCell sx={{ width: '12%' }}>
+                <TableSortLabel
+                  active={sortKey === 'district'}
+                  direction={sortKey === 'district' ? sortDirection : 'asc'}
+                  onClick={() => handleSort('district')}
+                  disabled={!!searchResult}
+                >
+                  District
+                </TableSortLabel>
+              </TableCell>
                 <TableCell sx={{ width: '11%' }} align="center">Actions</TableCell>
               </TableRow>
             </TableHead>
